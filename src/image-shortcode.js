@@ -88,7 +88,7 @@ function getImageData(src, zones) {
  * @param {ImageTagOptions} options The options for the image tag. 
  * @returns {string} The HTML image tag.
  */
-export function generateImageTag({ alt, baseUrl, classAttr, defaultImageWidth, imdexer, lazy = true, sizes = 'auto', src }) {
+function generateImageTag({ alt, baseUrl, classAttr, defaultImageWidth, imdexer, lazy = true, sizes = 'auto', src }) {
 
   if (!imdexer) {
     throw new Error(`${PACKAGE_NAME} requires an imdexer object.`);
