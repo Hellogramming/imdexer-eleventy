@@ -4,4 +4,6 @@
  * @author TechAurelian <dev@techaurelian.com> (https://techaurelian.com)
  */
 
+// @ts-check
+
 export const PACKAGE_NAME = 'imdexer-eleventy';

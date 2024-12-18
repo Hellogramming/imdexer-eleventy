@@ -4,6 +4,8 @@
  * @author TechAurelian <dev@techaurelian.com> (https://techaurelian.com)
  */
 
+// @ts-check
+
 import { PACKAGE_NAME } from './consts.js';
 import { joinPosixPath } from './utils.js';
 
@@ -12,8 +14,7 @@ import { joinPosixPath } from './utils.js';
  * 
  * @param {object} eleventyConfig The Eleventy configuration object.
  * @param {string} shortcodeName The name of the shortcode.
- * @param {object} imdexer The imdexer object containing data for the images.
- * @param {string} baseUrl The base URL for the images.
+ * @param {Array} zones The array of image zones.
  */
 export function addImageShortcode(eleventyConfig, shortcodeName, zones) {
 
@@ -29,7 +30,7 @@ export function addImageShortcode(eleventyConfig, shortcodeName, zones) {
     const data = getImageData(args.src, zones);
 
     // Generate and return the HTML image tag
-    return generateImageTag({ alt: args.alt, baseUrl: data.baseUrl, classAttr: args.class, imdexer: data.imdexer, lazy: args.lazy, sizes: args.sizes, src: data.imageSrc, defaultImage: args.defaultImage });
+    return generateImageTag({ alt: args.alt, baseUrl: data.baseUrl, classAttr: args.class, imdexer: data.imdexer, lazy: args.lazy, sizes: args.sizes, src: data.imageSrc, defaultImageWidth: args.defaultImageWidth });
   };
 
   // Add the shortcode to Eleventy
@@ -70,19 +71,24 @@ function getImageData(src, zones) {
 }
 
 /**
+ * @typedef {Object} ImageTagOptions
+ * @property {string} alt The alt attribute for the image.
+ * @property {string} baseUrl The base URL for the images.
+ * @property {string} classAttr The class attribute for the image.
+ * @property {number} defaultImageWidth The width of the default image to use for the src attribute.
+ * @property {Object} imdexer The imdexer object containing data for the images.
+ * @property {boolean} lazy Whether to use lazy loading for the image.
+ * @property {string} sizes The sizes attribute for the image.
+ * @property {string} src The source of the image.
+ */
+
+/**
  * Generates an image tag for the specified image.
- * 
- * @param {string} alt The alt attribute for the image.
- * @param {string} baseUrl The base URL for the images.
- * @param {string} classAttr The class attribute for the image.
- * @param {string} defaultImage The default image to use for the src attribute.
- * @param {Object} imdexer The imdexer object containing data for the images.
- * @param {boolean} lazy Whether to use lazy loading for the image.
- * @param {string} sizes The sizes attribute for the image.
- * @param {string} src The source of the image.
+ *
+ * @param {ImageTagOptions} options The options for the image tag. 
  * @returns {string} The HTML image tag.
  */
-function generateImageTag({ alt, baseUrl, classAttr, defaultImage, imdexer, lazy = false, sizes = 'auto', src } = {}) {
+function generateImageTag({ alt, baseUrl, classAttr, defaultImageWidth, imdexer, lazy = true, sizes = 'auto', src }) {
 
   if (!imdexer) {
     throw new Error(`${PACKAGE_NAME} requires an imdexer object.`);
@@ -113,7 +119,7 @@ function generateImageTag({ alt, baseUrl, classAttr, defaultImage, imdexer, lazy
     // Correctly join the base URL and the image source
     const fullSrc = joinPosixPath(baseUrl, src);
 
-    // Add the lazy loading attribute if specified
+    // Add the lazy loading attribute if it's set to true
     const loadingAttr = lazy ? 'loading="lazy"' : '';
 
     // Return the image tag
@@ -128,18 +134,38 @@ function generateImageTag({ alt, baseUrl, classAttr, defaultImage, imdexer, lazy
     return `${fullSrc} ${data.files[file].width}w`;
   }).join(', ');
 
-  // Get the largest image based on the width
-  const largestImage = Object.keys(data.files).reduce((a, b) => data.files[a].width > data.files[b].width ? a : b);
+  // // Get the largest image based on the width
+  // const largestImage = Object.keys(data.files).reduce((a, b) => data.files[a].width > data.files[b].width ? a : b);
 
-  // If the defaultImage is provided, use it, otherwise use the largest image for the src attribute
-  const fullSrc = defaultImage ? joinPosixPath(baseUrl, defaultImage) : joinPosixPath(baseUrl, largestImage);
+  // // If the defaultImage is provided, use it, otherwise use the largest image for the src attribute
+  // const fullSrc = defaultImage ? joinPosixPath(baseUrl, defaultImage) : joinPosixPath(baseUrl, largestImage);
 
-  const width = data.files[largestImage].width;
-  const height = data.files[largestImage].height;
+  // Get the record of the image to use as the default image
+  // MapEntry<String, SingleImageRecord> defaultImageRecord = defaultImageWidth != null
+  //     ? data.files.entries.firstWhere((entry) => entry.value.width == defaultImageWidth)
+  //     : data.files.entries.reduce((a, b) => a.value.width > b.value.width ? a : b);
 
-  // Add the lazy loading attribute if specified or if the sizes attribute is set to auto
-  const loadingAttr = lazy || sizes === 'auto' ? 'loading="lazy"' : '';
+  // If defaultImageWidth is provided, find the image with that width
+  let defaultImageRecord;
+  if (defaultImageWidth) {
+    defaultImageRecord = Object.entries(data.files).find(([_, value]) => value.width === defaultImageWidth);
+    if (!defaultImageRecord) {
+      throw new Error(`No image found with width ${defaultImageWidth} for image: ${src}`);
+    }
+  } else {
+    // Otherwise, find the largest image based on the width
+    defaultImageRecord = Object.entries(data.files).reduce((a, b) => a[1].width > b[1].width ? a : b);
+  }
+
+  // Get the full source of the default image
+  const defaultImage = joinPosixPath(baseUrl, defaultImageRecord[0]);
+
+  const width = data.files[defaultImage].width;
+  const height = data.files[defaultImage].height;
+
+  // Add the lazy loading attribute if it's set to true
+  const loadingAttr = lazy ? 'loading="lazy"' : '';
 
   // Return the image tag with all the responsive image attributes
-  return `<img ${loadingAttr} sizes="${sizes}" width="${width}" height="${height}" srcset="${srcset}" src="${fullSrc}" ${classAttr ? `class="${classAttr}"` : ''} alt="${alt}" />`;
+  return `<img ${loadingAttr} sizes="${sizes}" width="${width}" height="${height}" srcset="${srcset}" src="${defaultImage}" ${classAttr ? `class="${classAttr}"` : ''} alt="${alt}" />`;
 }

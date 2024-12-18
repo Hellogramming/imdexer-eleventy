@@ -4,6 +4,8 @@
  * @author TechAurelian <dev@techaurelian.com> (https://techaurelian.com)
  */
 
+// @ts-check
+
 /**
  * Joins two paths using the POSIX path separator, ensuring that there is only one separator
  * between them.

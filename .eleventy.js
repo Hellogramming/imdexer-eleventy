@@ -4,9 +4,23 @@
  * @author TechAurelian <dev@techaurelian.com> (https://techaurelian.com)
  */
 
+// @ts-check
+
 import { addImageShortcode } from "./src/image-shortcode.js";
 
-export default function (eleventyConfig, options = {}) {
+/**
+ * @typedef {Object} ImageShortcodeOptions
+ * @property {string} imgShortcode The name of the image shortcode.
+ * @property {Array} zones The array of image zones.
+ */
+
+/**
+ * Adds the specified image shortcode to Eleventy.
+ * 
+ * @param {Object} eleventyConfig The Eleventy configuration object.
+ * @param {ImageShortcodeOptions} options The options for the image shortcode.
+ */
+export default function (eleventyConfig, options) {
   // TODO: Validate options
 
   if (options.imgShortcode) {
