@@ -88,7 +88,7 @@ function getImageData(src, zones) {
  * @param {ImageTagOptions} options The options for the image tag. 
  * @returns {string} The HTML image tag.
  */
-function generateImageTag({ alt, baseUrl, classAttr, defaultImageWidth, imdexer, lazy = true, sizes = 'auto', src }) {
+export function generateImageTag({ alt, baseUrl, classAttr, defaultImageWidth, imdexer, lazy = true, sizes = 'auto', src }) {
 
   if (!imdexer) {
     throw new Error(`${PACKAGE_NAME} requires an imdexer object.`);
@@ -133,17 +133,6 @@ function generateImageTag({ alt, baseUrl, classAttr, defaultImageWidth, imdexer,
     const fullSrc = joinPosixPath(baseUrl, file);
     return `${fullSrc} ${data.files[file].width}w`;
   }).join(', ');
-
-  // // Get the largest image based on the width
-  // const largestImage = Object.keys(data.files).reduce((a, b) => data.files[a].width > data.files[b].width ? a : b);
-
-  // // If the defaultImage is provided, use it, otherwise use the largest image for the src attribute
-  // const fullSrc = defaultImage ? joinPosixPath(baseUrl, defaultImage) : joinPosixPath(baseUrl, largestImage);
-
-  // Get the record of the image to use as the default image
-  // MapEntry<String, SingleImageRecord> defaultImageRecord = defaultImageWidth != null
-  //     ? data.files.entries.firstWhere((entry) => entry.value.width == defaultImageWidth)
-  //     : data.files.entries.reduce((a, b) => a.value.width > b.value.width ? a : b);
 
   // If defaultImageWidth is provided, find the image with that width
   let defaultImageRecord;
