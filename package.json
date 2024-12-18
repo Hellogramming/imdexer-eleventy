@@ -1,9 +1,17 @@
 {
   "name": "imdexer-eleventy",
+  "description": "A simple Eleventy plugin to generate an index of all your content",
   "version": "1.0.0",
-  "description": "",
   "main": ".eleventy.js",
   "type": "module",
-  "author": "TechAurelian <dev@techaurelian.com> (https://techaurelian.com)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hellogramming/imdexer-eleventy.git"
+  },
+  "author": {
+    "name": "TechAurelian",
+    "email": "dev@techaurelian.com",
+    "url": "https://techaurelian.com/"
+  },
   "license": "UNLICENSED"
 }
