@@ -160,8 +160,9 @@ function generateImageTag({ alt, baseUrl, classAttr, defaultImageWidth, imdexer,
   // Get the full source of the default image
   const defaultImage = joinPosixPath(baseUrl, defaultImageRecord[0]);
 
-  const width = data.files[defaultImage].width;
-  const height = data.files[defaultImage].height;
+  // Get the width and height of the default image
+  const width = defaultImageRecord[1].width;
+  const height = defaultImageRecord[1].height;
 
   // Add the lazy loading attribute if it's set to true
   const loadingAttr = lazy ? 'loading="lazy"' : '';
