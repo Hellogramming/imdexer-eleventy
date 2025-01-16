@@ -7,10 +7,12 @@
 // @ts-check
 
 import { addImageShortcode } from "./src/image-shortcode.js";
+import { addImageUrlFilter } from "./src/image-filter.js";
 
 /**
  * @typedef {Object} ImageShortcodeOptions
  * @property {string} imgShortcode The name of the image shortcode.
+ * @property {string} imgUrlFilter The name of the image URL filter.
  * @property {Array} zones The array of image zones.
  */
 
@@ -25,5 +27,9 @@ export default function (eleventyConfig, options) {
 
   if (options.imgShortcode) {
     addImageShortcode(eleventyConfig, options.imgShortcode, options.zones);
+  }
+
+  if (options.imgUrlFilter) {
+    addImageUrlFilter(eleventyConfig, options.imgUrlFilter, options.zones);
   }
 };

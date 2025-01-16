@@ -7,7 +7,7 @@
 // @ts-check
 
 import { PACKAGE_NAME } from './consts.js';
-import { joinPosixPath } from './utils.js';
+import { joinPosixPath, getImageData } from './utils.js';
 
 /**
  * Adds the specified image shortcode to Eleventy.
@@ -35,39 +35,6 @@ export function addImageShortcode(eleventyConfig, shortcodeName, zones) {
 
   // Add the shortcode to Eleventy
   eleventyConfig.addShortcode(shortcodeName, imageShortcode);
-}
-
-/**
- * Gets the image data for the specified image source based on the available zones.
- * 
- * @param {string} src The source of the image.
- * @param {Array} zones The array of image zones.
- * @returns {Object} The image data object containing the image source, imdexer, and base URL.
- */
-function getImageData(src, zones) {
-
-  // If there is only one entry in the zones array, return its data
-  if (zones.length === 1) {
-    return {
-      imageSrc: src, // There should be no prefix to remove
-      imdexer: zones[0].imdexer,
-      baseUrl: zones[0].baseUrl,
-    }
-  }
-
-  // Otherwise, find the zone that matches the image source based on the prefix, and return its data
-  for (const zone of zones) {
-    if (src.startsWith(zone.prefix)) {
-      return {
-        imageSrc: src.slice(zone.prefix.length), // Remove the prefix from the image source
-        imdexer: zone.imdexer,
-        baseUrl: zone.baseUrl,
-      }
-    }
-  }
-
-  // If no zone matches the image source, throw an error
-  throw new Error(`No zone found for image: ${src}`);
 }
 
 /**
