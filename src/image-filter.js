@@ -1,9 +1,7 @@
 /**
- * @license
- * Copyright (c) TechAurelian {@link https://techaurelian.com}
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * Copyright 2024-2025 Hellogramming (https://www.hellogramming.com/). All rights reserved.
+ * See LICENSE in the project root for license information.
+ * @author TechAurelian <dev@techaurelian.com> (https://techaurelian.com)
  */
 
 // @ts-check
