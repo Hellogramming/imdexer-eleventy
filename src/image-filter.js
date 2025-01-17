@@ -18,12 +18,30 @@ import { joinPosixPath, getImageData } from './utils.js';
 export function addImageUrlFilter(eleventyConfig, filterName, zones) {
   /**
    * Returns the image URL with the correct path for the provided image source.
+   * 
+   * If the image source is a grouped image, the URL for the largest image in the group is returned.
+   * 
    * @param {string} src The image source.
    * @returns {string} The image URL.
    */
   const imageUrl = function(src) {
+    // Get the image data based on the available zones
     const data = getImageData(src, zones);
-    return joinPosixPath(data.baseUrl, data.imageSrc);
+
+    // Get the image data from the imdexer
+    const imageData = data.imdexer[src];
+    if (!imageData) {
+      throw new Error(`Missing image data for image: ${src}`);
+    }
+
+    // If this is a single (non-grouped) image, return the image URL
+    if (!data.files) {
+      return joinPosixPath(data.baseUrl, data.imageSrc);
+    }
+    
+    // If we are here, this is a grouped image, so return the image URL for the largest image in the group
+    const largestImageRecord = Object.entries(data.files).reduce((a, b) => a[1].width > b[1].width ? a : b);
+    return joinPosixPath(data.baseUrl, largestImageRecord[0]);
   };
 
   // Add the filter to Eleventy
